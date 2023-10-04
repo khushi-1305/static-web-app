@@ -1,51 +1,78 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-  "cli": {
-    "analytics": false
-  },
   "version": 1,
-  "newProjectRoot": "projects",
+  "newProjectRoot": "",
   "projects": {
-    "angular-basic": {
+    "demo": {
+      "root": "demo/",
+      "sourceRoot": "demo/src",
       "projectType": "application",
-      "schematics": {},
-      "root": "",
-      "sourceRoot": "src",
       "prefix": "app",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/angular-basic",
-            "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "tsconfig.app.json",
-            "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["src/styles.css"],
-            "scripts": [],
-            "vendorChunk": true,
-            "extractLicenses": false,
-            "buildOptimizer": false,
-            "sourceMap": true,
-            "optimization": false,
-            "namedChunks": true
+            "outputPath": "dist/demo",
+            "index": "demo/src/index.html",
+            "main": "demo/src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "demo/tsconfig.app.json",
+            "assets": [
+              "demo/src/favicon.ico",
+              "demo/src/assets",
+              "demo/src/app/bindings/remote",
+              "demo/src/app/syntax-highlight/remote",
+              "demo/src/app/plugins/remote"
+            ],
+            "styles": [
+              "demo/src/styles.scss",
+              "demo/src/scss/material-theme.scss",
+              "demo/src/scss/prism-theme.scss",
+              "node_modules/prismjs/plugins/command-line/prism-command-line.css",
+              "node_modules/prismjs/plugins/line-highlight/prism-line-highlight.css",
+              "node_modules/prismjs/plugins/line-numbers/prism-line-numbers.css",
+              "node_modules/katex/dist/katex.min.css"
+            ],
+            "scripts": [
+              "node_modules/marked/marked.min.js",
+              "node_modules/prismjs/prism.js",
+              "node_modules/prismjs/plugins/command-line/prism-command-line.js",
+              "node_modules/prismjs/plugins/highlight-keywords/prism-highlight-keywords.min.js",
+              "node_modules/prismjs/plugins/line-highlight/prism-line-highlight.js",
+              "node_modules/prismjs/plugins/line-numbers/prism-line-numbers.js",
+              "node_modules/prismjs/components/prism-bash.min.js",
+              "node_modules/prismjs/components/prism-c.min.js",
+              "node_modules/prismjs/components/prism-clike.min.js",
+              "node_modules/prismjs/components/prism-cpp.min.js",
+              "node_modules/prismjs/components/prism-css.min.js",
+              "node_modules/prismjs/components/prism-diff.min.js",
+              "node_modules/prismjs/components/prism-javascript.min.js",
+              "node_modules/prismjs/components/prism-latex.min.js",
+              "node_modules/prismjs/components/prism-markup.min.js",
+              "node_modules/prismjs/components/prism-markdown.min.js",
+              "node_modules/prismjs/components/prism-powershell.min.js",
+              "node_modules/prismjs/components/prism-python.min.js",
+              "node_modules/prismjs/components/prism-typescript.min.js",
+              "node_modules/emoji-toolkit/lib/js/joypixels.js",
+              "node_modules/katex/dist/katex.min.js",
+              "node_modules/katex/dist/contrib/auto-render.min.js",
+              "node_modules/mermaid/dist/mermaid.min.js",
+              "node_modules/clipboard/dist/clipboard.min.js"
+            ],
+            "allowedCommonJsDependencies": [
+              "gumshoejs",
+              "hammerjs"
+            ]
           },
           "configurations": {
             "production": {
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "budgets": [
                 {
                   "type": "initial",
@@ -57,54 +84,90 @@
                   "maximumWarning": "6kb",
                   "maximumError": "10kb"
                 }
-              ]
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
             }
           },
-          "defaultConfiguration": ""
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "browserTarget": "demo:build:production"
+            },
+            "development": {
+              "browserTarget": "demo:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "browserTarget": "angular-basic:build"
+            "eslintConfig": "demo/.eslintrc.json",
+            "lintFilePatterns": [
+              "demo/**/*.ts",
+              "demo/**/*.html"
+            ]
+          }
+        }
+      }
+    },
+    "lib": {
+      "root": "lib",
+      "sourceRoot": "lib/src",
+      "projectType": "library",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "lib/ng-package.json"
           },
           "configurations": {
             "production": {
-              "browserTarget": "angular-basic:build:production"
+              "tsConfig": "lib/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "lib/tsconfig.lib.json"
             }
-          }
-        },
-        "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "browserTarget": "angular-basic:build"
-          }
+          },
+          "defaultConfiguration": "production"
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "tsconfig.spec.json",
-            "karmaConfig": "karma.conf.js",
-            "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["src/styles.css"],
-            "scripts": []
+            "tsConfig": "lib/tsconfig.spec.json",
+            "karmaConfig": "lib/karma.conf.js",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
           }
         },
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "angular-basic:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "angular-basic:serve:production"
-            }
+            "eslintConfig": "lib/.eslintrc.json",
+            "lintFilePatterns": [
+              "lib/**/*.ts",
+              "lib/**/*.html"
+            ]
           }
         }
       }
     }
   },
-  "defaultProject": "angular-basic"
+  "cli": {
+    "analytics": false
+  }
 }
